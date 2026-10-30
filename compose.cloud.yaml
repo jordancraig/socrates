@@ -1,0 +1,8 @@
+services:
+  app:
+    build:
+      context: .
+      secrets: [proxy_ca]
+secrets:
+  proxy_ca:
+    file: ${CODEX_PROXY_CERT:?Cloud builds require CODEX_PROXY_CERT}
