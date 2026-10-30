@@ -65,7 +65,7 @@ CREATE TABLE IF NOT EXISTS versions(id text PRIMARY KEY,document_id text REFEREN
     {
       id: "argon",
       name: "Argon",
-      provider: "gemini",
+      provider: "antigravity",
       color: "#388b6a",
       model: "",
       enabled: true,
@@ -83,6 +83,10 @@ CREATE TABLE IF NOT EXISTS versions(id text PRIMARY KEY,document_id text REFEREN
       agent.id,
       JSON.stringify(agent),
     ]);
+  // Gemini CLI was retired in favour of Antigravity CLI (agy).
+  await query(
+    `UPDATE agents SET data=jsonb_set(data,'{provider}','"antigravity"') WHERE data->>'provider'='gemini'`,
+  );
   await query(
     `UPDATE tasks SET data=jsonb_set(jsonb_set(data,'{state}','"failed"'),'{error}','"Server restarted during task"') WHERE data->>'state' IN ('reading','writing','queued')`,
   );

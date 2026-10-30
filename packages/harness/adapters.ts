@@ -7,7 +7,7 @@ const exec = promisify(execFile);
 const binaries = {
   codex: process.env.CODEX_BIN || "codex",
   claude: process.env.CLAUDE_BIN || "claude",
-  gemini: process.env.GEMINI_BIN || "gemini",
+  antigravity: process.env.AGY_BIN || "agy",
 };
 async function capture(provider: Provider, args: string[]) {
   try {
@@ -81,7 +81,7 @@ async function codexModels(): Promise<string[]> {
 }
 export async function discover(): Promise<Harness[]> {
   return Promise.all(
-    (["codex", "gemini", "claude"] as Provider[]).map(async (provider) => {
+    (["codex", "antigravity", "claude"] as Provider[]).map(async (provider) => {
       const base: Harness = {
         provider,
         installed: false,
@@ -120,6 +120,16 @@ export async function discover(): Promise<Harness[]> {
           base.models = await codexModels();
           base.modelDiscovery = base.models.length
             ? "Discovered from Codex app-server model/list."
+            : "Model discovery unavailable; CLI default remains available.";
+        }
+        if (provider === "antigravity") {
+          const list = await capture(provider, ["models"]).catch(() => "");
+          base.models = list
+            .split("\n")
+            .map((line) => line.split("\t")[0].trim())
+            .filter(Boolean);
+          base.modelDiscovery = base.models.length
+            ? "Discovered from agy models."
             : "Model discovery unavailable; CLI default remains available.";
         }
         if (provider === "claude") {
@@ -163,8 +173,11 @@ export function assistantText(provider: Provider, event: any): string | null {
       );
     return null;
   }
-  if (event.type === "message" && event.role === "assistant")
-    return event.content || null;
+  if (
+    event.event === "step_update" &&
+    event.step_update?.step_type === "agent_response"
+  )
+    return event.step_update.text_delta || null;
   return null;
 }
 export async function runHarness(
@@ -200,10 +213,10 @@ export async function runHarness(
             ...(agent.model ? ["--model", agent.model] : []),
           ]
         : [
+            // Print mode denies tool permission requests; plan mode would write a plan instead of answering.
             "--output-format",
             "stream-json",
-            "--approval-mode",
-            "plan",
+            "--disable-slash-commands",
             ...(agent.model ? ["--model", agent.model] : []),
             "-p",
             prompt,
@@ -279,10 +292,15 @@ export async function runHarness(
               (!/reconnecting/i.test(event.message || "") ||
                 /403|forbidden/i.test(event.message || ""))) ||
             event.type === "turn.failed" ||
+            (event.event === "result" &&
+              event.result?.status !== "SUCCESS") ||
             event.is_error
           ) {
             failure = new Error(
-              event.message || event.error?.message || "Harness task failed",
+              event.message ||
+                event.error?.message ||
+                event.result?.error?.message ||
+                "Harness task failed",
             );
             if (
               /403|forbidden|not authenticated|unauthorized/i.test(
@@ -314,7 +332,7 @@ export async function runHarness(
         })
         .catch(reject);
     });
-    if (agent.provider !== "gemini") child.stdin.end(prompt);
+    if (agent.provider !== "antigravity") child.stdin.end(prompt);
     else child.stdin.end();
   });
 }

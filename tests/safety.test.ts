@@ -80,12 +80,29 @@ test("provider parsers exclude reasoning and tool output", () => {
     "writing\n",
   );
   assert.equal(
-    assistantText("gemini", {
-      type: "message",
-      role: "user",
-      content: "prompt",
+    assistantText("antigravity", {
+      event: "step_update",
+      step_update: { step_type: "user_input", state: "DONE" },
     }),
     null,
+  );
+  assert.equal(
+    assistantText("antigravity", {
+      event: "step_update",
+      step_update: {
+        step_type: "tool",
+        tool_name: "view_file",
+        state: "DONE",
+      },
+    }),
+    null,
+  );
+  assert.equal(
+    assistantText("antigravity", {
+      event: "step_update",
+      step_update: { step_type: "agent_response", text_delta: "hello" },
+    }),
+    "hello",
   );
   assert.equal(
     assistantText("claude", {

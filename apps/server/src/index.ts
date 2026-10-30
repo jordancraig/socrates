@@ -579,7 +579,7 @@ app.post("/api/worker/claim", async (req, res) => {
   harnesses = z
     .array(
       z.object({
-        provider: z.enum(["codex", "claude", "gemini"]),
+        provider: z.enum(["codex", "claude", "antigravity"]),
         installed: z.boolean(),
         version: z.string(),
         auth: z.enum(["authenticated", "unknown", "unavailable"]),

@@ -14,7 +14,7 @@ Date: 30 October 2026. Scope: the uploaded handoff, which is truncated in sectio
 | Codex authentication status            | ChatGPT login reported locally                                  |
 | Codex model discovery                  | app-server `model/list` returned catalog                        |
 | Codex actual editorial generation      | Blocked by host network policy: HTTP CONNECT 403 to chatgpt.com |
-| Gemini / Claude actual generation      | Not tested: CLIs not installed                                  |
+| Claude actual generation               | Not tested: CLI not installed                                   |
 | Provider subscription/automation terms | Not independently validated                                     |
 
 Real CLI invocation was attempted through the host-worker path. It was not replaced with simulated text or a paid API fallback. Cached model discovery and a local login are not evidence of a successful model turn.

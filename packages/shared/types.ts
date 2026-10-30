@@ -1,4 +1,4 @@
-export type Provider = "codex" | "gemini" | "claude";
+export type Provider = "codex" | "antigravity" | "claude";
 export type Agent = {
   id: string;
   name: string;

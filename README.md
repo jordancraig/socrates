@@ -30,10 +30,10 @@ Install and authenticate each CLI separately using the provider's own documented
 | Collaborator | Harness  | Integration behavior                                                                                         |
 | ------------ | -------- | ------------------------------------------------------------------------------------------------------------ |
 | Astra        | `codex`  | `exec --json`, read-only sandbox, ephemeral session; discovers model catalog through app-server `model/list` |
-| Argon        | `gemini` | non-interactive prompt with `stream-json` and plan approval mode                                             |
+| Argon        | `agy`    | Antigravity CLI print mode with `stream-json`; tool permission requests are denied; discovers `agy models`   |
 | Claude       | `claude` | print mode with `stream-json`, no tools, and `dontAsk` permissions                                           |
 
-`CODEX_BIN`, `GEMINI_BIN`, and `CLAUDE_BIN` can select executable paths. Versions lacking the structured output flag fail explicitly. Unknown authentication status means the CLI does not expose a usable status check; it is not treated as authenticated. Codex model catalogs may be cached by the harness and do not prove current model availability. Gemini and Claude have no verified model-list operation here: use the CLI default or a deliberately entered model ID. Provider flags and auth arrangements for those two CLIs remain unverified until installed on the target host.
+`CODEX_BIN`, `AGY_BIN`, and `CLAUDE_BIN` can select executable paths. Versions lacking the structured output flag fail explicitly. Unknown authentication status means the CLI does not expose a usable status check; it is not treated as authenticated. Codex model catalogs may be cached by the harness and do not prove current model availability. Claude has no verified model-list operation here: use the CLI default or a deliberately entered model ID. Antigravity CLI replaces the retired Gemini CLI; it starts a local language server, so it needs loopback port binding and write access to `~/.gemini/antigravity-cli`.
 
 ## Use the editor
 
@@ -82,7 +82,7 @@ The live document uses Yjs XML with stable node IDs. Comments and semantic chang
 
 Change records retain the agent, provider, selected model or explicit CLI-default label, base-state fingerprint, rich original and revised nodes, dependencies, timestamps, citations and acceptance state. Fingerprints use canonical key ordering so PostgreSQL JSONB round trips do not cause false conflicts. Reversal checks both current content and later dependency records, including accepted contributions. It never performs a global editor undo to reject an agent change.
 
-Only complete validated protocol operations enter the document. Codex CLI emits completed assistant-message events, so its contribution can arrive a paragraph at a time rather than token by token. Gemini text deltas are accumulated until a JSON operation is complete. Harness output, validated live content and review state are separate. There is no typing animation or application-generated agent response. Provider reasoning and tool output are not inserted as document content.
+Only complete validated protocol operations enter the document. Codex CLI emits completed assistant-message events, so its contribution can arrive a paragraph at a time rather than token by token. Antigravity text deltas are accumulated until a JSON operation is complete. Harness output, validated live content and review state are separate. There is no typing animation or application-generated agent response. Provider reasoning and tool output are not inserted as document content.
 
 Tasks have a three-minute execution deadline, process-group cancellation on Linux, output and operation budgets, a two-slot concurrency ceiling, heartbeat expiry and no automatic replay after failure. A server restart marks interrupted tasks failed and interrupted journal entries conflicted. Named snapshots and change records provide recoverable history. This is not a hardened distributed scheduler or a transactional offline editor.
 
@@ -107,7 +107,7 @@ Observed in the supplied environment on 30 October 2026:
 - The two-browser workflow test passes.
 - Docker image build and containerized browser persistence check pass.
 - Codex 0.163.0 is installed; `login status` reports ChatGPT authentication; model discovery returns the harness catalog. An actual generation attempt fails because the environment proxy denies `chatgpt.com` (HTTP CONNECT 403). Real generation is **not** verified.
-- Claude Code and Gemini CLI are absent, so their adapters have parser coverage but no end-to-end provider verification here.
+- Claude Code is absent, so its adapter has parser coverage but no end-to-end provider verification here.
 
 ## Remaining acceptance gaps
 

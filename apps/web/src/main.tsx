@@ -1097,8 +1097,8 @@ function App() {
                                 : "Connect " +
                                   (a.provider === "codex"
                                     ? "Codex"
-                                    : a.provider === "gemini"
-                                      ? "Gemini"
+                                    : a.provider === "antigravity"
+                                      ? "Antigravity"
                                       : "Claude")}
                           </small>
                         </span>
@@ -1844,8 +1844,8 @@ function App() {
                   <div className="provider-line">
                     {a.provider === "codex"
                       ? "OpenAI Codex CLI"
-                      : a.provider === "gemini"
-                        ? "Google Gemini CLI"
+                      : a.provider === "antigravity"
+                        ? "Google Antigravity CLI"
                         : "Claude Code CLI"}
                     <span>{h?.installed ? "Installed" : "Unavailable"}</span>
                   </div>
